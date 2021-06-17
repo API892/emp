@@ -1,0 +1,15 @@
+http:
+  port: "![MS1b5Dez6njRV6T4lZJQUg==]"
+  host: "![hHXdcrzofeB+PR8RmbyhdQ==]"
+
+db:
+  port: "![9xKkWS9DKhnQNAIj4GHkXg==]"
+  host: "![hHXdcrzofeB+PR8RmbyhdQ==]"
+  dbname: "![8NnP4GJtCBNUBsbyNo+zBA==]"
+  user: "![PTAuqW5vTRGGjKxR2S0aXQ==]"
+  password: "![PTAuqW5vTRGGjKxR2S0aXQ==]"
+
+sf:
+  username: "![/CLEStgeiaLH0pb8KKeXH2iGIUagHcUjpnsBMBsk4zw=]"
+  password: "![6nERzVjVv+bhqmxTiRnRdQ==]"
+  token: "![/uc+HOvDCB5SfWxkaGytiaYqu1kzsw1RyoZ8OWbgehE=]"

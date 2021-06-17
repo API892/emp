@@ -1,0 +1,221 @@
+{
+	"info": {
+		"_postman_id": "0629d64b-57a8-4b2e-9de4-56c24109c3c8",
+		"name": "employeecollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "25160B9dec9d47ba80C592B52e39d053",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "18f3a52bcefd430d9004f8c05f9cd819",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/employee/1?client-id=18f3a52bcefd430d9004f8c05f9cd819&client-secret=25160B9dec9d47ba80C592B52e39d053",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"employee",
+						"1"
+					],
+					"query": [
+						{
+							"key": "client-id",
+							"value": "18f3a52bcefd430d9004f8c05f9cd819"
+						},
+						{
+							"key": "client-secret",
+							"value": "25160B9dec9d47ba80C592B52e39d053"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "25160B9dec9d47ba80C592B52e39d053",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "18f3a52bcefd430d9004f8c05f9cd819",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n{\r\n\"empId\": 13,\r\n\"empName\": \"Susmitha\",\r\n\"email\": \"susmitha@apisero.com\",\r\n\"age\": 45,\r\n\"city\": \"HYD\",\r\n\"project\": \"ABC\",\r\n\"manager\": \"Ragalatha\"\r\n}\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/employee?client-id=18f3a52bcefd430d9004f8c05f9cd819&client-secret=25160B9dec9d47ba80C592B52e39d053",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"employee"
+					],
+					"query": [
+						{
+							"key": "client-id",
+							"value": "18f3a52bcefd430d9004f8c05f9cd819"
+						},
+						{
+							"key": "client-secret",
+							"value": "25160B9dec9d47ba80C592B52e39d053"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "25160B9dec9d47ba80C592B52e39d053",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "18f3a52bcefd430d9004f8c05f9cd819",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n{\r\n\"empId\": 13,\r\n\"empName\": \"Susmitha\",\r\n\"email\": \"susmitha.miriyala@apisero.com\",\r\n\"age\": 45,\r\n\"city\": \"HYD\",\r\n\"project\": \"ABC\",\r\n\"manager\": \"Ragalatha\"\r\n}\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/employee?client-id=18f3a52bcefd430d9004f8c05f9cd819&client-secret=25160B9dec9d47ba80C592B52e39d053",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"employee"
+					],
+					"query": [
+						{
+							"key": "client-id",
+							"value": "18f3a52bcefd430d9004f8c05f9cd819"
+						},
+						{
+							"key": "client-secret",
+							"value": "25160B9dec9d47ba80C592B52e39d053"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "25160B9dec9d47ba80C592B52e39d053",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "18f3a52bcefd430d9004f8c05f9cd819",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/employee?id=13&client-id=18f3a52bcefd430d9004f8c05f9cd819&client-secret=25160B9dec9d47ba80C592B52e39d053",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"employee"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "13"
+						},
+						{
+							"key": "client-id",
+							"value": "18f3a52bcefd430d9004f8c05f9cd819"
+						},
+						{
+							"key": "client-secret",
+							"value": "25160B9dec9d47ba80C592B52e39d053"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

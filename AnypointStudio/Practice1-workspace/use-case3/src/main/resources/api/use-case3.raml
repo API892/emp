@@ -1,0 +1,92 @@
+#%RAML 1.0
+title: Use Case3
+types:
+  empdata: !include /datatypes/emp_datatypes.raml
+traits: 
+  client-id-required:
+    queryParameters:
+      client-id:
+        description: client-id for the authentication purpose.
+        type: string
+        minLength: 5
+        required: true
+      client-secret:
+        description: client-secret for the authentication purpose.
+        type: string
+        minLength: 5
+        required: true  
+/employee:
+    /{id}:
+     is: [client-id-required]
+     get:      
+      responses:
+        200:
+          body:
+            application/json:
+              type: empdata[]
+              examples: 
+                output: !include /examples/emp_examples.raml
+        400:
+          body:
+            application/json:
+              example: !include /examples/ErrorResponse/400.json
+                
+        401:
+          body:
+            application/json:
+              example: !include /examples/ErrorResponse/401.json
+        404:
+          body:
+            application/json:
+              example: !include /examples/ErrorResponse/404.json
+
+        500:
+          body:
+            application/json:
+              example: !include /examples/ErrorResponse/500.json        
+                
+                
+    post:
+      description: insert new records.
+      body:
+        application/json:
+          examples:
+            input: !include /examples/emp_examples.raml
+      responses:
+        200:
+          body:
+            application/json:
+              examples:
+                message: " Successfully inserted!!"
+
+    put:
+      description: To update a record.
+      body:
+        application/json:
+          examples:
+            input:  !include /examples/emp_examples.raml
+      responses:
+        200:
+          description: 
+          body:
+            application/json:
+              examples: 
+                 message: "changes are done successfully"
+
+    delete:
+      description: To delete a record based on id.
+      queryParameters:
+        id: integer
+      responses:
+        200:
+          body:
+            application/json:
+              examples:
+                message: " deleted a record by given id"
+                
+                
+            
+            
+  
+
+  
