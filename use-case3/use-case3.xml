@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="488ce026-a353-4926-a6ae-8e0c05f8f424" persistent="false" />
+	<flow name="use-case3Flow" doc:id="28b877a3-4555-47f1-87e3-7b34e5b14ff3" initialState="stopped">
+		<http:listener doc:name="Listener" doc:id="4d84bc69-fdf0-42c4-b310-7b101bd9ae5a" path="/test" allowedMethods="PUT" config-ref="HTTP_Listener_config1"/>
+		<ee:transform doc:name="Transform Message" doc:id="a63e33c4-e72e-42e4-a3d8-71a14e226ae1">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map(item, index) ->
+{
+	Emp_ID__c: item.empId,
+	Name__c: item.empName,
+	Email__c: item.empEmail,
+	Age__c: item.empAge,
+	City__c: item.city, 
+	Project__c: item.project,
+	Manager__c: item.manager
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:upsert objectType="Employee__c" externalIdFieldName="Name" doc:name="Upsert" doc:id="c5fc2c87-f6a4-4974-a98c-eea03a7bf413" config-ref="Salesforce_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="465eb823-1c5c-49ed-82a6-28e8c1849ad0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="use-case3Flow1" doc:id="3c4410c3-0bba-4910-91e1-dd3700c3e1c5">
+		<http:listener doc:name="Listener" doc:id="bb9b8132-f807-49d2-8e81-b6b005f64ba0" config-ref="HTTP_Listener_config1" path="/dbtest" allowedMethods="POST"/>
+		<ee:transform doc:name="Transform Message" doc:id="285ecbdb-ec06-46d8-bc83-abba374e93b5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="d98ecf61-de57-4194-879b-63791b1f1686" >
+			<db:insert doc:name="Insert" doc:id="2af5f588-2b2c-4c9a-9f0f-21bd6fbb5ffb" config-ref="Database_Config">
+			<db:sql><![CDATA[insert into employee(empId,empName,empEmail,empAge,city,project,manager) values (:empId,:empName,:empEmail,:empAge,:city,:project,:manager)]]></db:sql>
+			<db:input-parameters><![CDATA[#[{empId:payload.empId,empName:payload.empName,empEmail:payload.empEmail,empAge:payload.empAge,city:payload.city,project:payload.project,manager:payload.manager}]]]></db:input-parameters>
+		</db:insert>
+		</foreach>
+	</flow>
+	<flow name="use-case3Flow2" doc:id="103b6098-eb39-4530-afed-bd622708ff2f" initialState="started">
+		<scheduler doc:name="Scheduler" doc:id="21c14667-f328-49a0-8cb9-e2e03ce9a1c0" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="10" timeUnit="SECONDS"/>
+			</scheduling-strategy>
+		</scheduler>
+		<os:retrieve doc:name="Retrieve" doc:id="4b32d115-11c4-45c0-a474-0cef181f8273" key="lastempId" target="lastempId" objectStore="Object_store">
+			<os:default-value ><![CDATA[0]]></os:default-value>
+		</os:retrieve>
+		<db:select doc:name="Select" doc:id="3649d050-780f-4b83-be0e-1b15d62277a3" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from employee where empId> :lastempId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{lastempId:vars.lastempId}]]]></db:input-parameters>
+		</db:select>
+		<choice doc:name="Choice" doc:id="19446d13-6f99-4dab-bb77-a7bab819d47a" >
+			<when expression="#[not isEmpty(payload)]">
+				<os:store doc:name="Store" doc:id="4bf07641-f263-49cb-bea8-69e04270ab8a" key="lastempId" objectStore="Object_store">
+			<os:value><![CDATA[#[max(payload.*empId)]]]></os:value>
+		</os:store>
+				<file:write doc:name="Write" doc:id="d28af523-8b56-432b-af47-06237b3848ba" path="C:\Users\ssa_s\OneDrive\Desktop\APDevFundamentals4.3_studentFiles_SP_30oct2020\resources\Employeedata.csv" mode="APPEND">
+					<file:content ><![CDATA[#[output application/csv header=false --- payload]]]></file:content>
+				</file:write>
+				<ee:transform doc:name="Transform Message" doc:id="86b58964-0a94-4751-b39a-6abe42aaa93f">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map(item, index) ->
+{
+	Emp_ID__c: item.empId,
+	Name__c: item.empName,
+	Email__c: item.empEmail,
+	Age__c: item.empAge,
+	City__c: item.city, 
+	Project__c: item.project,
+	Manager__c: item.manager
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<salesforce:upsert doc:name="Upsert" doc:id="16e20add-4ab3-4a13-936a-ae083526e77f" config-ref="Salesforce_Config" objectType="Employee__c" externalIdFieldName="Emp_ID__c">
+				</salesforce:upsert>
+				<logger level="INFO" doc:name="Logger" doc:id="d3f764df-c7fc-4dc6-b26e-27a452493f21" message="#[payload]" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="6e31c8d7-a086-474f-bae5-bbe25f6504fd" message='#["No new records"]' />
+			</otherwise>
+		</choice>
+	</flow>
+	<flow name="use-case3Flow3" doc:id="991790eb-0040-4359-a8b7-fe8c48d05c70" >
+		<http:listener doc:name="Listener" doc:id="760d7bd7-0919-41dc-91c9-0e37e22067da" config-ref="HTTP_Listener_config1" path="/deletesfdc" allowedMethods="DELETE"/>
+		<set-variable value="#[attributes.queryParams.id]" doc:name="Set Variable" doc:id="fe129936-29c3-4ee2-b574-5ed043270fac" variableName="id"/>
+		<db:delete doc:name="Delete" doc:id="7f9441e1-ed1a-4a1e-9d13-570267c24b06" config-ref="Database_Config">
+			<db:sql ><![CDATA[delete from employee where empId = :id
+]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{id:vars.id}]]]></db:input-parameters>
+		</db:delete>
+		<salesforce:query doc:name="Query" doc:id="7062458c-9c83-4329-bae3-2e6a8e28b8ec" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[select Id,Emp_ID__c,Name__c,Age__c,City__c,Email__c,Project__c,Manager__c from Employee__c where Emp_ID__c = :id
+]]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[{id:vars.id}]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="ff47f957-2623-41d4-b9b4-8093051f852d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+	Id : $.Id,
+	Name__c : $.Name__c,
+	Age__c : $.Age__c,
+	City__c : $.City__c,
+	Email__c : $.Email__c,
+	Emp_ID__c : $.Emp_ID__c,
+	Project__c : $.Project__c,
+	Manager__c : $.Manager__c 
+	}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:delete doc:name="Delete" doc:id="b05e1048-22e1-45f2-b670-06265627ee35" config-ref="Salesforce_Config">
+			<salesforce:ids ><![CDATA[#[payload.Id]]]></salesforce:ids>
+		</salesforce:delete>
+		<ee:transform doc:name="Transform Message" doc:id="cd30d81f-3fa4-483f-bce6-5da51ed1ea05" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="use-case3Flow4" doc:id="c196922d-b605-4f6a-9acf-c6f117ba30f3" >
+		<http:listener doc:name="Listener" doc:id="c7e6c14b-f75c-49b3-b40f-90f8fe2bd9f9" config-ref="HTTP_Listener_config1" path="/putsfdc" allowedMethods="PUT"/>
+		<foreach doc:name="For Each" doc:id="a644fbd2-0242-4174-9023-61e8fb2040f2" >
+			<set-variable value="#[payload.empId]" doc:name="Set Variable" doc:id="0b5d51c7-41e9-49c3-abb1-03f45fd5d7ef" variableName="id" />
+			<db:update doc:name="Update" doc:id="ea3f7fcd-1313-423a-bcc5-a719da762610" config-ref="Database_Config">
+			<db:sql><![CDATA[update employee set empName = :empName,empEmail = :empEmail,empAge = :empAge,city = :city,project = :project,manager = :manager where empId = :empId]]></db:sql>
+			<db:input-parameters><![CDATA[#[{empId:vars.id,empEmail:payload.empEmail,empName:payload.empName,empAge:payload.empAge,city:payload.city,project:payload.project,manager:payload.manager}]]]></db:input-parameters>
+		</db:update>
+			<db:select doc:name="Select" doc:id="59fa610d-e140-469e-a64c-8e216f49e9a0" config-ref="Database_Config">
+			<db:sql><![CDATA[select * from employee where empId = :id]]></db:sql>
+			<db:input-parameters><![CDATA[#[{id:vars.id}]]]></db:input-parameters>
+		</db:select>
+			<ee:transform doc:name="Transform Message" doc:id="f7fb41b3-9a31-47ba-ae41-39be9c285573">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+	Name__c : $.empName,
+	Age__c : $.empAge,
+	City__c : $.city,
+	Email__c : $.empEmail,
+	Emp_ID__c : $.empId,
+	Project__c : $.project,
+	Manager__c : $.manager
+	}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			<salesforce:upsert objectType="Employee__c" externalIdFieldName="Emp_ID__c" doc:name="Upsert" doc:id="e6817696-346b-4668-9dfc-aea623553f3e" config-ref="Salesforce_Config">
+		</salesforce:upsert>
+		</foreach>
+		<ee:transform doc:name="Transform Message" doc:id="e9202dff-2a39-41a4-a9fa-5cba5b0a9e8a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message" : " salesforce records updated successfully"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

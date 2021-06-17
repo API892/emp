@@ -1,0 +1,15 @@
+http:
+  port: "8081"
+  host: "localhost"
+  
+db:
+  port: "3306"
+  host: "localhost"
+  dbname: "swapna"
+  user: "root"
+  password: "root"
+ 
+sf:
+  username: "swapna@apisero.com"
+  password: "swapi@201120"
+  token: "LjkvWWuCe4RKxqpFoGyfQ6xq"
